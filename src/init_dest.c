@@ -187,11 +187,13 @@ void bullet_sourcexy(struct FIGURE_t *b){
 }
 
 void init_bullet(int b_index){
-    bullet[b_index].dir = player.last_dir;
-    bullet[b_index].movespeed = 10;
-    bullet_sourcexy(&bullet[b_index]);
-    bullet_x_y(&bullet[b_index]);
-    bullet[b_index].alive = true;    
+    bullet[b_index].f.dir = player.last_dir;
+    bullet[b_index].f.movespeed = 10;
+    bullet_sourcexy(&bullet[b_index].f);
+    bullet_x_y(&bullet[b_index].f);
+    bullet[b_index].f.alive = true;
+    bullet[b_index].anim = 0;
+    bullet[b_index].explosion = false;    
 }
 
 void random_x_y(struct FIGURE_t *e){
@@ -290,7 +292,7 @@ void dest_allegro(void){
 void reset_bullet(void){
     int i;
     for (i = 0; i < MAX_BULLETS; i ++){
-        bullet[i].alive = false;
+        bullet[i].f.alive = false;
     }
 }
 

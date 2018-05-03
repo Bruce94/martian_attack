@@ -101,16 +101,38 @@ void draw_background(void){
 }
 
 void draw_bullet(int i){
-    if (bullet[i].alive){
-        if (bullet[i].dir == DIR_UP || bullet[i].dir == DIR_DOWN)
-            al_draw_bitmap_region(bitmap.bullet, bullet[i].sourcex,
-                bullet[i].sourcey, BULLET_W, 
-                BULLET_H, bullet[i].x, bullet[i].y, 0);
-        if (bullet[i].dir == DIR_RIGHT || bullet[i].dir == DIR_LEFT)
-            al_draw_bitmap_region(bitmap.bullet, bullet[i].sourcex,
-                bullet[i].sourcey, BULLET_H, 
-                BULLET_W, bullet[i].x, bullet[i].y, 0);
-    }   
+    if (!bullet[i].explosion){ 
+        if (bullet[i].f.alive){
+            if (bullet[i].f.dir == DIR_UP || bullet[i].f.dir == DIR_DOWN)
+                al_draw_bitmap_region(bitmap.bullet, bullet[i].f.sourcex,
+                    bullet[i].f.sourcey, BULLET_W, 
+                    BULLET_H, bullet[i].f.x, bullet[i].f.y, 0);
+            if (bullet[i].f.dir == DIR_RIGHT || bullet[i].f.dir == DIR_LEFT)
+                al_draw_bitmap_region(bitmap.bullet, bullet[i].f.sourcex,
+                    bullet[i].f.sourcey, BULLET_H, 
+                    BULLET_W, bullet[i].f.x, bullet[i].f.y, 0);
+        }
+    }
+    else{
+        switch (bullet[i].anim){
+            case 0:
+                al_draw_bitmap_region(bitmap.explosion, 0, 0, 8, 8,
+                    bullet[i].f.x, bullet[i].f.y, 0);
+                bullet[i].anim ++;
+                break;
+            case 1:
+                al_draw_bitmap_region(bitmap.explosion, 8, 0, 12, 12,
+                    bullet[i].f.x-2, bullet[i].f.y-2, 0);
+                bullet[i].anim ++;
+                break;
+            case 2:
+                al_draw_bitmap_region(bitmap.explosion, 20, 0, 16, 16,
+                    bullet[i].f.x-4, bullet[i].f.y-4, 0);
+                bullet[i].anim = 0;
+                bullet[i].explosion = false;
+                break;
+        }
+    }
 }
 
 void draw_score_level_life(void){

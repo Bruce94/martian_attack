@@ -37,10 +37,10 @@ void player_border_collision(void){
 
 void bullet_enemy_collision(int i){
     int j;
-    int bx = bullet[i].x;
-    int by = bullet[i].y;
-    int bw = bullet[i].x + BULLET_W;
-    int bh = bullet[i].x + BULLET_H;
+    int bx = bullet[i].f.x;
+    int by = bullet[i].f.y;
+    int bw = bullet[i].f.x + BULLET_W;
+    int bh = bullet[i].f.x + BULLET_H;
     int ex, ey, ew, eh;
     
     for (j = 0; j < n_enemies; j++){
@@ -58,7 +58,8 @@ void bullet_enemy_collision(int i){
             //if (((bx >= ex && bx <= ew) || (bw >= ex && bw <= ew)) &&
             //    ((by >= ey && by <= eh) || (bh >= ey && bh <= eh))){
             if ((bx >= ex && bx <= ew) && (by >= ey && by <= eh)){
-                bullet[i].alive = false;
+                bullet[i].f.alive = false;
+                bullet[i].explosion = true;
                 enemy[j].alive = false;
                 score ++;
                 dead_enemies ++;
@@ -123,20 +124,20 @@ void move_player(bool key[]){
 void *move_bullet(void *arg){
     int i = *((int *) arg);
     sem_wait(&sem_bullet);
-        if (bullet[i].alive){
-            if (bullet[i].x < 0 || bullet[i].x > XWIN || 
-                bullet[i].y < 0 || bullet[i].y > YWIN){
-                bullet[i].alive = false;
+        if (bullet[i].f.alive){
+            if (bullet[i].f.x < 0 || bullet[i].f.x > XWIN || 
+                bullet[i].f.y < 0 || bullet[i].f.y > YWIN){
+                bullet[i].f.alive = false;
             }
             else{
-                if (bullet[i].dir == DIR_DOWN)
-                    down(&bullet[i]);
-                if (bullet[i].dir == DIR_UP)
-                    up(&bullet[i]);
-                if (bullet[i].dir == DIR_RIGHT)
-                    right(&bullet[i]);
-                if (bullet[i].dir == DIR_LEFT)
-                    left(&bullet[i]);
+                if (bullet[i].f.dir == DIR_DOWN)
+                    down(&bullet[i].f);
+                if (bullet[i].f.dir == DIR_UP)
+                    up(&bullet[i].f);
+                if (bullet[i].f.dir == DIR_RIGHT)
+                    right(&bullet[i].f);
+                if (bullet[i].f.dir == DIR_LEFT)
+                    left(&bullet[i].f);
                 //printf("Bullet[%d]:x[%f],y[%f]\n",i,bullet[i].x,bullet[i].y);
             }
             sem_wait(&sem_enemies_move);

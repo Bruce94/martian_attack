@@ -99,7 +99,7 @@ void load_function(void){
 void shot_bullet(void){
     int i;
     for(i = 0; i < MAX_BULLETS; i++){
-        if(!bullet[i].alive){
+        if(!bullet[i].f.alive){
             init_bullet(i);
             return;
         }
@@ -110,9 +110,10 @@ void *player_comands(void *arg){
     int i;
     if (key[ESCAPE]){
         game_state = MENU;
+        al_stop_sample(&audio.id);
         reinit();
         for (i = 0; i < MAX_BULLETS; i++)
-            bullet[i].alive = false;
+            bullet[i].f.alive = false;
         key[ESCAPE] = false;
     }
     if (key[P]){
@@ -164,6 +165,11 @@ void play_function(void){
     draw_play();
 
     if (dead_enemies == n_enemies){
+        for (i = 0; i < MAX_BULLETS; i++){
+            if (bullet[i].explosion){
+                return;
+            }
+        }
         al_play_sample(audio.oh_yeah,0.5,0.0, 1,
             ALLEGRO_PLAYMODE_ONCE , 0);
         game_state = LOAD;
@@ -191,6 +197,7 @@ void pause_funtion(void){
     draw_pause();
     
     if (key[ESCAPE]){
+        al_stop_sample(&audio.id);
         game_state = MENU;
         key[ESCAPE] = false;
         reinit();
@@ -240,34 +247,32 @@ void game_loop(void){
             game_state = QUIT;
         else if (event.type == ALLEGRO_EVENT_TIMER)
         {
-            switch(game_state){
-                case MENU:
-                    menu_function();
-                    draw_screen_menu(menu);
-                    break;
-                case LOAD:
-                    load_function();
-                    break;
-                case PLAY:
-                    play_function();
-                    break;
-                case PAUSE:
-                    pause_funtion();
-                    break;
-                case CONTROLS:
-                    show_controls_function();
-                    break;
-                case HIGH_SCORE:
-                    high_score_function();
-                    break;
-                case GAME_OVER:
-                    game_over_function();
-                    break;
-                case WIN:
-                    break;
-                case QUIT:
-                    finish = true;
-                    break;
+            switch (game_state){
+            case MENU:
+                menu_function();
+                draw_screen_menu(menu);
+                break;
+            case LOAD:
+                load_function();
+                break;
+            case PLAY:
+                play_function();
+                break;
+            case PAUSE:
+                pause_funtion();
+                break;
+            case CONTROLS:
+                show_controls_function();
+                break;
+            case HIGH_SCORE:
+                high_score_function();
+                break;
+            case GAME_OVER:
+                game_over_function();
+                break;
+            case QUIT:
+                finish = true;
+                break;
             }
         }
     }

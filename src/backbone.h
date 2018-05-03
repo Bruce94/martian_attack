@@ -62,7 +62,7 @@ enum DIR { DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT, DIR_STOP };
 // on the phase in which the game is located.  
 //--------------------------------------------------------------
 enum GAME_STATE{ MENU, LOAD, PLAY, PAUSE, CONTROLS,
-                 HIGH_SCORE, GAME_OVER, QUIT, WIN };
+                 HIGH_SCORE, GAME_OVER, QUIT};
 
 // Values that will be attribuited to the game_loop key array
 enum KEYS{ UP, DOWN, RIGHT, LEFT, ENTER, D, ESCAPE, SPACE, S, P };
@@ -80,6 +80,12 @@ struct  FIGURE_t    {   // Struct containing figure's data
         float           x;                //screen coordinate x
         float           y;                //screen coordinate y
         bool            alive;              
+};
+
+struct  BULLET_t    {
+        struct FIGURE_t f;
+        bool            explosion;
+        int             anim;
 };
 
 struct  AUDIO_t     {   // Struct containing audio data
@@ -125,7 +131,7 @@ int                 n_enemies;
 int                 dead_enemies;
 struct FIGURE_t     player;
 struct FIGURE_t     enemy[MAX_ENEMIES];
-struct FIGURE_t     bullet[MAX_BULLETS];
+struct BULLET_t     bullet[MAX_BULLETS];
 struct FONT_t       font;
 struct AUDIO_t      audio;
 struct BITMAP_t     bitmap;
