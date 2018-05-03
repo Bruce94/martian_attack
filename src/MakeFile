@@ -1,0 +1,66 @@
+#-------------------------------------------------------------------
+# Target file to be compiled by default
+#-------------------------------------------------------------------
+
+MAIN = martian_attack
+
+#-------------------------------------------------------------------
+# CC is the compiler to be used
+#-------------------------------------------------------------------
+
+CC = gcc
+
+#-------------------------------------------------------------------
+# CFLAGS are the option passed to the compiler
+#-------------------------------------------------------------------
+
+#CFLAGS = -Wall -lpthread
+CFLAGS = -Wall -lm -lpthread
+
+#-------------------------------------------------------------------
+# OBJS are the object files to be linked
+#-------------------------------------------------------------------
+OBJ_INIT = init_dest
+OBJ_IO = io
+OBJ_LOGIC = game_logic
+OBJ_GUI = gui
+OBJ_MOVE = movements
+
+OBJS = $(MAIN).o $(OBJ_INIT).o $(OBJ_IO).o $(OBJ_LOGIC).o $(OBJ_GUI).o $(OBJ_MOVE).o
+
+#-------------------------------------------------------------------
+# LIBS are the external libraries to be used
+#-------------------------------------------------------------------
+
+# LIBS = `allegro-config --libs`
+LIBS = `pkg-config --cflags --libs allegro-5 allegro_acodec-5 allegro_audio-5 allegro_color-5 allegro_dialog-5 allegro_font-5 allegro_image-5 allegro_main-5 allegro_memfile-5 allegro_physfs-5 allegro_primitives-5 allegro_ttf-5`
+
+#-------------------------------------------------------------------
+# Dependencies
+#-------------------------------------------------------------------
+
+$(MAIN): $(OBJS)
+	$(CC) -o $(MAIN) $(OBJS) $(LIBS) $(CFLAGS)
+
+$(MAIN).o:$(MAIN).c
+	$(CC) -c $(MAIN).c
+
+$(OBJ_INIT).o: $(OBJ_INIT).c
+	$(CC) -c $(OBJ_INIT).c
+
+$(OBJ_IO).o: $(OBJ_IO).c
+	$(CC) -c $(OBJ_IO).c
+
+$(OBJ_LOGIC).o: $(OBJ_LOGIC).c
+	$(CC) -c $(OBJ_LOGIC).c
+
+$(OBJ_GUI).o: $(OBJ_GUI).c
+	$(CC) -c $(OBJ_GUI).c
+
+$(OBJ_MOVE).o: $(OBJ_MOVE).c
+	$(CC) -c $(OBJ_MOVE).c
+#-------------------------------------------------------------------
+# Command that can be specified inline: make clean
+#-------------------------------------------------------------------
+clean:
+	rm -rf *o $(MAIN)
