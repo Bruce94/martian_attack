@@ -73,6 +73,7 @@ void load_function(void){
     pthread_attr_t attr;
     pthread_t p[n_enemies+1];    
 
+    death_anim = 0;
     pthread_attr_init(&attr);
     for (i = 0; i < n_enemies; i++){
         int *arg = malloc(sizeof(*arg));
@@ -111,7 +112,7 @@ void *player_comands(void *arg){
     if (key[ESCAPE]){
         game_state = MENU;
         al_stop_sample(&audio.id);
-        reinit();
+        reset_game();
         for (i = 0; i < MAX_BULLETS; i++)
             bullet[i].f.alive = false;
         key[ESCAPE] = false;
@@ -129,7 +130,7 @@ void *player_comands(void *arg){
         key[SPACE] = false;
     }
     if (!player.alive)
-        game_state = GAME_OVER;
+        game_state = DEATH;
 }
 
 void play_function(void){
@@ -178,6 +179,17 @@ void play_function(void){
 
 }
 
+void death_function(void){
+    if (death_anim < 6){
+        draw_player_death(death_anim);
+        death_anim ++;
+    }
+    else{
+        death_anim = 0;
+        game_state = GAME_OVER;
+    }
+}
+
 void game_over_function(void){
     int h_score = read_score();
 
@@ -188,9 +200,8 @@ void game_over_function(void){
         key[ESCAPE] = false;
         if (h_score < score)
             save_score();
-        reinit();
-    }
-    
+        reset_game();
+    } 
 }
 
 void pause_funtion(void){
@@ -200,7 +211,7 @@ void pause_funtion(void){
         al_stop_sample(&audio.id);
         game_state = MENU;
         key[ESCAPE] = false;
-        reinit();
+        reset_game();
     }
 
     if (key[P]){
@@ -225,7 +236,6 @@ void high_score_function(void){
         game_state = MENU;
         key[ESCAPE] = false;
     }
-
 }
 
 void game_loop(void){
@@ -266,6 +276,9 @@ void game_loop(void){
                 break;
             case HIGH_SCORE:
                 high_score_function();
+                break;
+            case DEATH:
+                death_function();
                 break;
             case GAME_OVER:
                 game_over_function();

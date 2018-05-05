@@ -33,8 +33,7 @@
 // TASK CONSTANTS
 //-----------------------------------------------------------------------------
 #define     PER     15      // task periods in ms
-#define     DL      20      // relative deadline in ms
-#define     PRI     80      // task priority
+//#define     PRI     80      // task priority
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -62,7 +61,7 @@ enum DIR { DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT, DIR_STOP };
 // on the phase in which the game is located.  
 //--------------------------------------------------------------
 enum GAME_STATE{ MENU, LOAD, PLAY, PAUSE, CONTROLS,
-                 HIGH_SCORE, GAME_OVER, QUIT};
+                 HIGH_SCORE, GAME_OVER, DEATH, QUIT};
 
 // Values that will be attribuited to the game_loop key array
 enum KEYS{ UP, DOWN, RIGHT, LEFT, ENTER, D, ESCAPE, SPACE, S, P };
@@ -72,13 +71,13 @@ enum KEYS{ UP, DOWN, RIGHT, LEFT, ENTER, D, ESCAPE, SPACE, S, P };
 // GLOBAL STRUCTURES
 //-----------------------------------------------------------------------------
 struct  FIGURE_t    {   // Struct containing figure's data
-        enum DIR        dir;
+        enum DIR        dir;              // direction of figure
         enum DIR        last_dir;
         float           movespeed;
-        int             sourcex;
-        int             sourcey;
-        float           x;                //screen coordinate x
-        float           y;                //screen coordinate y
+        int             sourcex;          // Coordinate x for the region of the sheet
+        int             sourcey;          // Coordinate x for the region of the sheet
+        float           x;                // screen coordinate x
+        float           y;                // screen coordinate y
         bool            alive;              
 };
 
@@ -110,6 +109,7 @@ struct  BITMAP_t    {   // Struct containing bitmap to use
         ALLEGRO_BITMAP  *left_arrow;
         ALLEGRO_BITMAP  *up_arrow;
         ALLEGRO_BITMAP  *down_arrow;
+        ALLEGRO_BITMAP  *player_blood;
 };
 
 struct  FONT_t      {   // Struct containing font data
@@ -137,11 +137,9 @@ struct AUDIO_t      audio;
 struct BITMAP_t     bitmap;
 ALLEGRO_DISPLAY     *display;
 ALLEGRO_EVENT_QUEUE *event_queue;
-ALLEGRO_TIMER       *timer;
-ALLEGRO_TIMER       *timer2;
-ALLEGRO_TIMER       *timermov; 
+ALLEGRO_TIMER       *timer; 
 sem_t               sem_enemies_init;
-sem_t               sem_enemies_move;
+sem_t               sem_enemies;
 sem_t               sem_bullet;
 //-----------------------------------------------------------------------------
 

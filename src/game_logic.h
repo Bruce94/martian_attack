@@ -24,6 +24,7 @@
 void game_loop(void);
 
 int menu;
+int death_anim;
 enum GAME_STATE game_state;
 bool start_menu_song;
 bool key[10];

@@ -82,6 +82,9 @@ void init_bitmap(void){
     bitmap.down_arrow = al_load_bitmap("data/img/down_arrow.png");
     if (bitmap.down_arrow == NULL)
         printf("\n Bitmap Error, down_arrow.png error!");
+    bitmap.player_blood = al_load_bitmap("data/img/player_blood.png");
+    if (bitmap.player_blood == NULL)
+        printf("\n Bitmap Error, player_blood.png error!");
 }
 
 //-----------------------------------------------------------------------------
@@ -108,12 +111,10 @@ void init_allegro(void){
     if(!display)
         al_show_native_message_box(display,"Display Error", "Error",
             "Display window could not be shown","Ok",ALLEGRO_MESSAGEBOX_ERROR);
-    al_set_window_title(display, "Shoot Game");
+    al_set_window_title(display, "Martian Attack");
     event_queue = al_create_event_queue();
 
     timer = al_create_timer(1.0/PER);
-    // timer2 = al_create_timer(1.0 / FTIME);
-    // timermov = al_create_timer(1.0 / FMOV);
 
     init_font();
     init_audio();
@@ -134,7 +135,7 @@ void init(void){
     init_allegro();
 
     sem_init(&sem_enemies_init, 0, 1);
-	sem_init(&sem_enemies_move, 0, 1);
+	sem_init(&sem_enemies, 0, 1);
     sem_init(&sem_bullet,0,1);
     score = 0;
     level = 0;
@@ -151,6 +152,9 @@ void *init_player(void *arg){
     player.alive = true;
 }
 
+//-----------------------------------------------------------------------------
+// sets the "x" and "y" according to the direction of the player
+//-----------------------------------------------------------------------------
 void bullet_x_y(struct FIGURE_t *b){
     if (b->dir == DIR_RIGHT){
         b->x = player.x + 37;
@@ -170,6 +174,9 @@ void bullet_x_y(struct FIGURE_t *b){
     }
 }
 
+//-----------------------------------------------------------------------------
+// sets the "sourcex" according to the direction in which the bullet was fired
+//-----------------------------------------------------------------------------
 void bullet_sourcexy(struct FIGURE_t *b){
     b->sourcey = 0;
     if (b->dir == DIR_DOWN){
@@ -196,6 +203,9 @@ void init_bullet(int b_index){
     bullet[b_index].explosion = false;    
 }
 
+//-----------------------------------------------------------------------------
+// Used to chose randomly x, y position for enemy's initialization
+//-----------------------------------------------------------------------------
 void random_x_y(struct FIGURE_t *e){
     if (e->dir == DIR_UP){
         e->x = rand() % XWIN;
@@ -215,7 +225,11 @@ void random_x_y(struct FIGURE_t *e){
     }
 }
 
-//TODO: fare apparire dai bordi
+//-----------------------------------------------------------------------------
+//  Initialize enemy's data by randomly choosing the direction and position.
+//  They are started out of the window.
+//  Every 5 levels of random enemies increase their speed.
+//-----------------------------------------------------------------------------
 void init_enemy(int e_index){
     enemy[e_index].dir = rand() % DIR_STOP;
     enemy[e_index].last_dir = enemy[e_index].dir;
@@ -229,11 +243,6 @@ void init_enemy(int e_index){
     enemy[e_index].alive = true;
 }
 
-
-//-----------------------------------------------------------------------------
-// Initialize enemy data, executed by single thread.
-// The argument contain the index of thread.
-//-----------------------------------------------------------------------------
 void *inititialize_enemy(void *arg){
     int i = *((int *) arg);
     sem_wait(&sem_enemies_init);
@@ -243,7 +252,7 @@ void *inititialize_enemy(void *arg){
 
 //-----------------------------------------------------------------------------
 // function that deallocate the loaded fonts
-// Executed in ::dest_allegro function when the player close the game
+// Executed in dest_allegro function when the player close the game
 //-----------------------------------------------------------------------------
 void dest_font(void){
     al_destroy_font(font.h1);
@@ -254,8 +263,25 @@ void dest_font(void){
 }
 
 //-----------------------------------------------------------------------------
+// function that deallocate the loaded images
+// Executed in dest_allegro function when the player close the game
+//-----------------------------------------------------------------------------
+void dest_bitmap(void){
+    al_destroy_bitmap(bitmap.bullet);
+    al_destroy_bitmap(bitmap.explosion);
+    al_destroy_bitmap(bitmap.background);
+    al_destroy_bitmap(bitmap.enemy);
+    al_destroy_bitmap(bitmap.player);
+    al_destroy_bitmap(bitmap.right_arrow);
+    al_destroy_bitmap(bitmap.left_arrow);
+    al_destroy_bitmap(bitmap.up_arrow);
+    al_destroy_bitmap(bitmap.down_arrow);
+    al_destroy_bitmap(bitmap.player_blood);
+}
+
+//-----------------------------------------------------------------------------
 // function that deallocate the loaded audio files
-// Executed in ::dest_allegro function when the player close the game
+// Executed in dest_allegro function when the player close the game
 //-----------------------------------------------------------------------------
 void dest_audio(){
     #if defined(unix) || defined(__unix__) || defined(__unix)
@@ -283,6 +309,7 @@ void dest_audio(){
 
 void dest_allegro(void){
     dest_audio();
+    dest_bitmap();
     dest_font();
     al_destroy_timer(timer);
     al_destroy_display(display);
@@ -296,9 +323,8 @@ void reset_bullet(void){
     }
 }
 
-void reinit(void){
+void reset_game(void){
     reset_bullet();
     score = 0;
     level = 0;
 }
-

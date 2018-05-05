@@ -20,6 +20,8 @@ void draw_countdown();
 
 void draw_play(void);
 
+void draw_player_death(int death_anim);
+
 void draw_game_over(int h_score);
 
 void draw_pause(void);

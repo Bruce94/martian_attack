@@ -140,9 +140,9 @@ void *move_bullet(void *arg){
                     left(&bullet[i].f);
                 //printf("Bullet[%d]:x[%f],y[%f]\n",i,bullet[i].x,bullet[i].y);
             }
-            sem_wait(&sem_enemies_move);
+            sem_wait(&sem_enemies);
                 bullet_enemy_collision(i);
-            sem_post(&sem_enemies_move);
+            sem_post(&sem_enemies);
         }
     sem_post(&sem_bullet);
 }
@@ -151,7 +151,7 @@ void *move_enemy(void *arg){
     int i = *((int *) arg);
     float dx, dy;
     bool ud_rl;
-    sem_wait(&sem_enemies_move);
+    sem_wait(&sem_enemies);
     if(enemy[i].alive){
         dx = player.x - enemy[i].x;
         dy = player.y - enemy[i].y;
@@ -200,5 +200,5 @@ void *move_enemy(void *arg){
         }
         enemy_player_collision(i);
     }
-    sem_post(&sem_enemies_move);
+    sem_post(&sem_enemies);
 }

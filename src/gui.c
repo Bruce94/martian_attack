@@ -164,6 +164,37 @@ void draw_play(void){
     al_flip_display();
 }
 
+void draw_player_death(int death_anim){
+    draw_background();
+    switch (death_anim){
+    case 0:
+        al_draw_bitmap_region(bitmap.player_blood, 0, 0, 20, 31,
+            player.x, player.y, 0);
+        break;
+    case 1:
+        al_draw_bitmap_region(bitmap.player_blood, 20, 0, 34, 41,
+            player.x, player.y, 0);
+        break;
+    case 2:
+        al_draw_bitmap_region(bitmap.player_blood, 54, 0, 34, 41,
+            player.x, player.y, 0);
+        break;
+    case 3:
+        al_draw_bitmap_region(bitmap.player_blood, 88, 0, 44, 47,
+            player.x, player.y, 0);
+        break;
+    case 4:
+        al_draw_bitmap_region(bitmap.player_blood, 132, 0, 55, 45,
+            player.x, player.y, 0);
+        break;
+    case 5:
+        al_draw_bitmap_region(bitmap.player_blood, 187, 0, 49, 43,
+            player.x, player.y, 0);
+        break;
+    }
+    al_flip_display();
+}
+
 void draw_game_over(int h_score){
     char s[255];
     	    
