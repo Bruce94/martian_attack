@@ -11,7 +11,7 @@ void update_level(void){
 }
 
 //-----------------------------------------------------------------------------
-// The menu_function handle the user interaction with the "MENU" game phase
+// Handle the user interaction with the "MENU" game phase
 // here the user can go up and down on the menu options and select one of these
 // with ENTER key.
 // This function is used in game_loop function.
@@ -62,7 +62,7 @@ void menu_function(){
 }
 
 //-----------------------------------------------------------------------------
-// The loading_function is used to initialize enemies and player data and show 
+// Used to initialize enemies and player data and show 
 // the countdown of the game. The initialization is managed by n_enemies + 1 
 // pthreads, at the same time the main thread will show the countdown and then 
 // wait for the end of their execution to continue passing to the PLAY phase.
@@ -92,29 +92,36 @@ void load_function(void){
     
     for (i = 0; i < n_enemies+1; i++)
 	    pthread_join(p[i], NULL);
-    if(!al_play_sample(audio.game_loop, 0.5, 0.0, 1, ALLEGRO_PLAYMODE_LOOP, &audio.id))
+    if (!al_play_sample(audio.game_loop, 0.5, 0.0, 1, ALLEGRO_PLAYMODE_LOOP, &audio.id))
         printf("Audio Error! - does not start sample_game audio\n");
     game_state = PLAY;
 }
 
+//-----------------------------------------------------------------------------
+// When the player shoots, the first bullet that has the "alive" variable
+// set to false is initialized.
+//-----------------------------------------------------------------------------
 void shot_bullet(void){
     int i;
-    for(i = 0; i < MAX_BULLETS; i++){
-        if(!bullet[i].f.alive){
+    for (i = 0; i < MAX_BULLETS; i++){
+        if (!bullet[i].f.alive){
             init_bullet(i);
             return;
         }
     }
 }
 
+//-----------------------------------------------------------------------------
+// With ESCAPE key user return to the menu, with P key pause the game, with
+// SPACE key shot a bullet. This function call move_player for the directional
+// key. The shot_bullet is protected by semaphores
+//-----------------------------------------------------------------------------
 void *player_comands(void *arg){
     int i;
     if (key[ESCAPE]){
         game_state = MENU;
         al_stop_sample(&audio.id);
-        reset_game();
-        for (i = 0; i < MAX_BULLETS; i++)
-            bullet[i].f.alive = false;
+        reset_game();        
         key[ESCAPE] = false;
     }
     if (key[P]){
@@ -129,10 +136,15 @@ void *player_comands(void *arg){
         sem_post(&sem_bullet);
         key[SPACE] = false;
     }
-    if (!player.alive)
-        game_state = DEATH;
 }
 
+//-----------------------------------------------------------------------------
+// Whenever this function is called, is created one thread for the user 
+// commands, "n_enemies" threads are created for the enemies and as many
+// threads are created as the "alive" bullets variable are set to true. 
+// The main thread wait for the end of child threads, and then draw on display.
+// At the end it checks if the player has killed all the enemies or is dead.
+//-----------------------------------------------------------------------------
 void play_function(void){
     int i;
     pthread_attr_t attr;
@@ -158,7 +170,7 @@ void play_function(void){
     for (i = 0; i < n_enemies; i++)
         pthread_join(e[i], NULL);
     
-    for(i = 0; i < MAX_BULLETS; i++)
+    for (i = 0; i < MAX_BULLETS; i++)
         pthread_join(b[i], NULL);
     
     pthread_attr_destroy(&attr);
@@ -176,9 +188,13 @@ void play_function(void){
         game_state = LOAD;
         update_level();
     }
-
+    if (!player.alive)
+        game_state = DEATH;
 }
 
+//-----------------------------------------------------------------------------
+// Show the animated player death
+//-----------------------------------------------------------------------------
 void death_function(void){
     if (death_anim < 6){
         draw_player_death(death_anim);
@@ -191,15 +207,17 @@ void death_function(void){
 }
 
 void game_over_function(void){
-    int h_score = read_score();
 
     draw_game_over(h_score);
 
     if (key[ESCAPE]){
+        al_stop_sample(&audio.id);
         game_state = MENU;
         key[ESCAPE] = false;
-        if (h_score < score)
+        if (h_score < score){
+            h_score = score;
             save_score();
+        }
         reset_game();
     } 
 }
@@ -229,8 +247,6 @@ void show_controls_function(void){
 }
 
 void high_score_function(void){
-    int h_score = read_score();
-
     draw_high_score(h_score);
     if (key[ESCAPE]){
         game_state = MENU;
@@ -243,6 +259,7 @@ void game_loop(void){
     game_state = MENU;
     menu = 1;
     start_menu_song = false;
+    h_score = read_score();
     
     while(!finish){
         ALLEGRO_EVENT event;

@@ -21,20 +21,26 @@ void left(struct FIGURE_t *f){
 }
 
 void player_border_collision(void){
-    if(player.dir == DIR_RIGHT && player.x + PLAYER_H >= XWIN){
+    if (player.dir == DIR_RIGHT && player.x + PLAYER_H >= XWIN){
         player.x -= player.movespeed;
     }
-    else if(player.dir == DIR_LEFT && player.x < 0){
+    else if (player.dir == DIR_LEFT && player.x < 0){
         player.x += player.movespeed;
     }
-    else if(player.dir == DIR_UP && player.y < 0){
+    else if (player.dir == DIR_UP && player.y < 0){
         player.y += player.movespeed;
     }
-    else if(player.dir == DIR_DOWN && player.y + PLAYER_H >= YWIN){
+    else if (player.dir == DIR_DOWN && player.y + PLAYER_H >= YWIN){
         player.y -= player.movespeed;
     }
 }
 
+//-----------------------------------------------------------------------------
+// Check the collision of the bullet[i] with the enemies.
+// If the bullet hits one of the enemies, both the "alive" variable is set to 
+// false and the "explosion" variable of the bullet is set to true to then
+// execute the explosion animation.
+//-----------------------------------------------------------------------------
 void bullet_enemy_collision(int i){
     int j;
     int bx = bullet[i].f.x;
@@ -55,15 +61,13 @@ void bullet_enemy_collision(int i){
                 ew = enemy[j].x + ENEMY_H;           
                 eh = enemy[j].y + ENEMY_W;
             }
-            //if (((bx >= ex && bx <= ew) || (bw >= ex && bw <= ew)) &&
-            //    ((by >= ey && by <= eh) || (bh >= ey && bh <= eh))){
             if ((bx >= ex && bx <= ew) && (by >= ey && by <= eh)){
                 bullet[i].f.alive = false;
                 bullet[i].explosion = true;
                 enemy[j].alive = false;
                 score ++;
                 dead_enemies ++;
-                al_play_sample(audio.enemy_death,0.2,0.0, 1,
+                al_play_sample(audio.enemy_death, 0.2, 0.0, 1,
                     ALLEGRO_PLAYMODE_ONCE , 0);
                 return;
             }
@@ -71,6 +75,10 @@ void bullet_enemy_collision(int i){
     }
 }
 
+//-----------------------------------------------------------------------------
+// Check the collision of the enemy[i] with the player.
+// If the enemy catch the player the game is over.
+//-----------------------------------------------------------------------------
 void enemy_player_collision(int i){
     int ex = enemy[i].x + 5;
     int ey = enemy[i].y + 5;
@@ -100,7 +108,7 @@ void enemy_player_collision(int i){
         al_play_sample(audio.player_death,0.4,0.0, 1,
             ALLEGRO_PLAYMODE_ONCE , 0);
         al_play_sample(audio.sample_lose,1.0,0.0, 1,
-            ALLEGRO_PLAYMODE_ONCE , 0);               
+            ALLEGRO_PLAYMODE_ONCE , &audio.id);               
         player.alive = false;
     }
 }
@@ -138,7 +146,6 @@ void *move_bullet(void *arg){
                     right(&bullet[i].f);
                 if (bullet[i].f.dir == DIR_LEFT)
                     left(&bullet[i].f);
-                //printf("Bullet[%d]:x[%f],y[%f]\n",i,bullet[i].x,bullet[i].y);
             }
             sem_wait(&sem_enemies);
                 bullet_enemy_collision(i);

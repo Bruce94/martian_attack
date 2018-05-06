@@ -15,8 +15,16 @@
 //-----------------------------------------------------------------------------
 void update_keys(ALLEGRO_EVENT event, bool key[], bool setting);
 
+//-----------------------------------------------------------------------------
+// Write the high score obtained on the save file "save.txt"
+// It's used at "GAME OVER" state when the user press ESC key
+//-----------------------------------------------------------------------------
 void save_score(void);
 
+//-----------------------------------------------------------------------------
+// Read the high score form the save file "save.txt"
+// It's used from game loop function
+//-----------------------------------------------------------------------------
 int read_score(void);
 
 #endif

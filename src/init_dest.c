@@ -153,7 +153,7 @@ void *init_player(void *arg){
 }
 
 //-----------------------------------------------------------------------------
-// sets the "x" and "y" according to the direction of the player
+// sets the "x" and "y" according to the bullet direction
 //-----------------------------------------------------------------------------
 void bullet_x_y(struct FIGURE_t *b){
     if (b->dir == DIR_RIGHT){
@@ -194,7 +194,10 @@ void bullet_sourcexy(struct FIGURE_t *b){
 }
 
 void init_bullet(int b_index){
-    bullet[b_index].f.dir = player.last_dir;
+    if (player.dir == DIR_STOP)
+        bullet[b_index].f.dir = player.last_dir;
+    else    
+        bullet[b_index].f.dir = player.dir;
     bullet[b_index].f.movespeed = 10;
     bullet_sourcexy(&bullet[b_index].f);
     bullet_x_y(&bullet[b_index].f);

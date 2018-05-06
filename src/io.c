@@ -1,60 +1,69 @@
 #include"io.h"
 
 void update_keys(ALLEGRO_EVENT event, bool key[], bool setting){
-    switch(event.keyboard.keycode){
-        case ALLEGRO_KEY_UP:
-            key[UP] = setting;
-            break;
-        case ALLEGRO_KEY_DOWN:
-            key[DOWN] = setting;
-            break;
-        case ALLEGRO_KEY_RIGHT:
-            key[RIGHT] = setting;
-            break;
-         case ALLEGRO_KEY_LEFT:
-            key[LEFT] = setting;
-            break;
-         case ALLEGRO_KEY_ENTER:
-            key[ENTER] = setting;
-            break;
-         case ALLEGRO_KEY_SPACE:
-            key[SPACE] = setting;
-            break;    
-         case ALLEGRO_KEY_D:
-            key[D] = setting;
-            break;
-         case ALLEGRO_KEY_ESCAPE:
-            key[ESCAPE] = setting;
-            break;
-         case ALLEGRO_KEY_P:
-            key[P] = setting;
-            break;
-         case ALLEGRO_KEY_S:
-            key[S] = setting;
-            break;
+    if ((event.keyboard.keycode == ALLEGRO_KEY_UP ||
+            event.keyboard.keycode == ALLEGRO_KEY_DOWN ||
+            event.keyboard.keycode == ALLEGRO_KEY_RIGHT ||
+            event.keyboard.keycode == ALLEGRO_KEY_LEFT )&&
+            (event.type == ALLEGRO_EVENT_KEY_DOWN)){
+        key[UP] = false;
+        key[DOWN] = false;
+        key[RIGHT] = false;
+        key[LEFT] = false;
+    }
+    switch (event.keyboard.keycode){
+    case ALLEGRO_KEY_UP:
+        key[UP] = setting;
+        break;
+    case ALLEGRO_KEY_DOWN:
+        key[DOWN] = setting;
+        break;
+    case ALLEGRO_KEY_RIGHT:
+        key[RIGHT] = setting;
+        break;
+    case ALLEGRO_KEY_LEFT:
+        key[LEFT] = setting;
+        break;
+    case ALLEGRO_KEY_ENTER:
+        key[ENTER] = setting;
+        break;
+    case ALLEGRO_KEY_SPACE:
+        key[SPACE] = setting;
+        break;    
+    case ALLEGRO_KEY_D:
+        key[D] = setting;
+        break;
+    case ALLEGRO_KEY_ESCAPE:
+        key[ESCAPE] = setting;
+        break;
+    case ALLEGRO_KEY_P:
+        key[P] = setting;
+        break;
+    case ALLEGRO_KEY_S:
+        key[S] = setting;
+        break;
     }
 }
 
 void save_score(void){
-    FILE *f = fopen("sav.txt", "w");
-    if (f == NULL)
-    {
+    FILE *fw = fopen("sav.txt", "w");
+    if (fw == NULL){
         printf("Error opening file!\n");
         exit(1);
     }
-    fprintf(f, "%d", score);
-    fclose(f);
+    fprintf(fw, "%d", score);
+    fclose(fw);
 }
 
 int read_score(void){
-    FILE* file = fopen ("sav.txt", "r");
+    FILE* fr = fopen ("sav.txt", "r");
     int i = 0;
-
-    fscanf (file, "%d", &i);    
-    while (!feof (file))
-    {  
-        fscanf (file, "%d", &i);      
+    if (fr == NULL){
+        return 0;
     }
-    fclose (file);
+    fscanf (fr, "%d", &i);    
+    while (!feof (fr)) 
+        fscanf (fr, "%d", &i);
+    fclose (fr);
     return i;
 }

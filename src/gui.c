@@ -1,15 +1,22 @@
 #include"gui.h"
 
+void draw_text_font_h1(int x, int y, char *str){
+    al_draw_text(font.h1, al_map_rgb(255,255,255), x, y,
+        ALLEGRO_ALIGN_CENTER, str);
+}
+
+void draw_text_font_h2(int x, int y, char *str){
+    al_draw_text(font.h2, al_map_rgb(255,255,255), x, y,
+        ALLEGRO_ALIGN_CENTER, str);
+}
+
 void draw_screen_menu(int menu){
     al_clear_to_color(al_map_rgb(0,0,0));
-    al_draw_text(font.h1, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 10 / 100, ALLEGRO_ALIGN_CENTER, "Martian Attack");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 55 / 100, ALLEGRO_ALIGN_CENTER, "Start Game");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 65 / 100, ALLEGRO_ALIGN_CENTER, "Controls");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 75 / 100, ALLEGRO_ALIGN_CENTER, "High Score");
+    draw_text_font_h1(XWIN / 2, YWIN * 10 / 100, "Martian Attack");
+    draw_text_font_h2(XWIN / 2, YWIN * 55 / 100, "Start Game");
+    draw_text_font_h2(XWIN / 2, YWIN * 65 / 100, "Controls");
+    draw_text_font_h2(XWIN / 2, YWIN * 75 / 100, "High Score");
+
     al_draw_text(font.h4, al_map_rgb(255,255,255), XWIN / 2, 
             YWIN * 95 / 100, ALLEGRO_ALIGN_CENTER, "Powered by Bruno Ghion");
     switch (menu)
@@ -38,8 +45,7 @@ void draw_screen_menu(int menu){
 
 void draw_string_tmp(char *str){
     al_clear_to_color(al_map_rgb(0,0,0));
-    al_draw_text(font.h1, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 50 / 100, ALLEGRO_ALIGN_CENTER, str);
+    draw_text_font_h1(XWIN / 2, YWIN * 50 / 100, str);
     al_flip_display();
     al_rest(2.0);
 }
@@ -100,6 +106,11 @@ void draw_background(void){
     al_draw_bitmap(bitmap.background, 0, 0, 0);
 }
 
+//-----------------------------------------------------------------------------
+// If the bullet has the variable "explosion" set to false and the variable
+// "alive" set to true draws the bullet otherwise if "explosion" is true it
+// draws the animation of the bullet explosion
+//-----------------------------------------------------------------------------
 void draw_bullet(int i){
     if (!bullet[i].explosion){ 
         if (bullet[i].f.alive){
@@ -200,10 +211,9 @@ void draw_game_over(int h_score){
     	    
     snprintf(s, 255, "score: %d", score);
     al_clear_to_color(al_map_rgb(0,0,0));
-    al_draw_text(font.h1, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 50 / 100, ALLEGRO_ALIGN_CENTER, "Game Over!");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 60 / 100, ALLEGRO_ALIGN_CENTER, s);
+    draw_text_font_h1(XWIN / 2, YWIN * 50 / 100, "Game Over!");
+    draw_text_font_h2(XWIN / 2, YWIN * 60 / 100, s);
+
     if (h_score < score)
         al_draw_text(font.h2, al_map_rgb(255,0,0), XWIN / 2, 
             YWIN * 65 / 100, ALLEGRO_ALIGN_CENTER, "New High Score!");
@@ -213,19 +223,18 @@ void draw_game_over(int h_score){
     al_flip_display();
 }
 
-void draw_pause(void){  	    
-    al_draw_text(font.h1, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 50 / 100, ALLEGRO_ALIGN_CENTER, "Pause!");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN / 2, 
-            YWIN * 60 / 100, ALLEGRO_ALIGN_CENTER, 
-            "Press P to return at geme or ESC to return to the menu!");
+void draw_pause(void){  	   
+    draw_text_font_h1(XWIN / 2, YWIN * 50 / 100, "Pause!");
+    draw_text_font_h2(XWIN / 2, YWIN * 65 / 100, 
+        "Press P to return at geme or ESC to return to the menu!");
     al_flip_display();
 }
 
+
+
 void draw_controls(void){
     al_clear_to_color(al_map_rgb(0,0,0));
-    al_draw_text(font.h1, al_map_rgb(255,255,255), XWIN / 2, 
-        YWIN * 10 / 100, ALLEGRO_ALIGN_CENTER, "CONTROLS");
+    draw_text_font_h1(XWIN / 2, YWIN * 10 / 100, "CONTROLS");
     al_draw_bitmap(bitmap.up_arrow, XWIN * 20 / 100, YWIN * 30 / 100, 0);
     al_draw_bitmap(bitmap.down_arrow, XWIN * 20 / 100, YWIN * 40 / 100, 0);
     al_draw_bitmap(bitmap.right_arrow, XWIN * 20 / 100, YWIN * 50 / 100, 0);
@@ -235,19 +244,12 @@ void draw_controls(void){
     al_draw_text(font.h5, al_map_rgb(255,255,255), XWIN * 25 / 100, 
         YWIN * 80 / 100, ALLEGRO_ALIGN_CENTER, "p");
 
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN * 70 / 100, 
-        YWIN * 35 / 100, ALLEGRO_ALIGN_CENTER, "UP");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN * 70 / 100, 
-        YWIN * 45 / 100, ALLEGRO_ALIGN_CENTER, "DOWN");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN * 70 / 100, 
-        YWIN * 55 / 100, ALLEGRO_ALIGN_CENTER, "RIGHT");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN * 70 / 100, 
-        YWIN * 65 / 100, ALLEGRO_ALIGN_CENTER, "LEFT");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN * 70 / 100, 
-        YWIN * 73 / 100, ALLEGRO_ALIGN_CENTER, "SHOOT");
-    al_draw_text(font.h2, al_map_rgb(255,255,255), XWIN * 70 / 100, 
-        YWIN * 80 / 100, ALLEGRO_ALIGN_CENTER, "PAUSE");
-    
+    draw_text_font_h2(XWIN * 70 / 100, YWIN * 35 / 100, "UP");
+    draw_text_font_h2(XWIN * 70 / 100, YWIN * 45 / 100, "DOWN");
+    draw_text_font_h2(XWIN * 70 / 100, YWIN * 55 / 100, "RIGHT");
+    draw_text_font_h2(XWIN * 70 / 100, YWIN * 65 / 100, "LEFT");
+    draw_text_font_h2(XWIN * 70 / 100, YWIN * 73 / 100, "SHOOT");
+    draw_text_font_h2(XWIN * 70 / 100, YWIN * 80 / 100, "PAUSE");
     al_flip_display();
 }
 
@@ -257,8 +259,8 @@ void draw_high_score(int h_score){
     snprintf(s, 255, "%d", h_score);
 
     al_clear_to_color(al_map_rgb(0, 0, 0));
-    al_draw_text(font.h1, al_map_rgb(255, 255, 255), XWIN / 2, 
-        YWIN * 10 / 100, ALLEGRO_ALIGN_CENTER, "HIGH SCORE"); 
+
+    draw_text_font_h1(XWIN / 2, YWIN * 10 / 100, "HIGH SCORE");
 
     al_draw_text(font.h1, al_map_rgb(255, 0, 0), XWIN / 2, 
         YWIN / 2, ALLEGRO_ALIGN_CENTER, s);

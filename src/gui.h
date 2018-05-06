@@ -3,23 +3,23 @@
 
 #include "backbone.h"
 
-
 //-----------------------------------------------------------------------------
 // Used from game_loop for print the menu.
 // The int varible "menu" denote the option selected by the user.
 //-----------------------------------------------------------------------------
 void draw_screen_menu(int menu);
 
-//-----------------------------------------------------------------------------
-// Used from loading_function for print the countdown
-//-----------------------------------------------------------------------------
 void draw_countdown();
 
 //-----------------------------------------------------------------------------
+// Draw all the components of the game including the player character, 
+// the enemies, the bullets the score and the level.
 //-----------------------------------------------------------------------------
-
 void draw_play(void);
 
+//-----------------------------------------------------------------------------
+// Draw the player death animation before the game over screen
+//-----------------------------------------------------------------------------
 void draw_player_death(int death_anim);
 
 void draw_game_over(int h_score);
