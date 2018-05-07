@@ -114,7 +114,8 @@ void shot_bullet(void){
 //-----------------------------------------------------------------------------
 // With ESCAPE key user return to the menu, with P key pause the game, with
 // SPACE key shot a bullet. This function call move_player for the directional
-// key. The shot_bullet is protected by semaphores
+// key.
+// It's esecuted by player thread.
 //-----------------------------------------------------------------------------
 void *player_comands(void *arg){
     int i;
@@ -128,11 +129,16 @@ void *player_comands(void *arg){
         game_state = PAUSE;
         key[P] = false;
     }
+    sem_wait(&sem_player);
     move_player(key);
+    sem_post(&sem_player);
+
     if (key[SPACE]){
         al_play_sample(audio.shot, 1.0, 0.0, 1, ALLEGRO_PLAYMODE_ONCE , 0);
         sem_wait(&sem_bullet);
+        sem_wait(&sem_player);
         shot_bullet();
+        sem_post(&sem_player);
         sem_post(&sem_bullet);
         key[SPACE] = false;
     }

@@ -1,23 +1,23 @@
 #include"gui.h"
 
 void draw_text_font_h1(int x, int y, char *str){
-    al_draw_text(font.h1, al_map_rgb(255,255,255), x, y,
+    al_draw_text(font.h1, al_map_rgb(255, 255, 255), x, y,
         ALLEGRO_ALIGN_CENTER, str);
 }
 
 void draw_text_font_h2(int x, int y, char *str){
-    al_draw_text(font.h2, al_map_rgb(255,255,255), x, y,
+    al_draw_text(font.h2, al_map_rgb(255, 255, 255), x, y,
         ALLEGRO_ALIGN_CENTER, str);
 }
 
 void draw_screen_menu(int menu){
-    al_clear_to_color(al_map_rgb(0,0,0));
+    al_clear_to_color(al_map_rgb(0, 0, 0));
     draw_text_font_h1(XWIN / 2, YWIN * 10 / 100, "Martian Attack");
     draw_text_font_h2(XWIN / 2, YWIN * 55 / 100, "Start Game");
     draw_text_font_h2(XWIN / 2, YWIN * 65 / 100, "Controls");
     draw_text_font_h2(XWIN / 2, YWIN * 75 / 100, "High Score");
 
-    al_draw_text(font.h4, al_map_rgb(255,255,255), XWIN / 2, 
+    al_draw_text(font.h4, al_map_rgb(255, 255, 255), XWIN / 2, 
             YWIN * 95 / 100, ALLEGRO_ALIGN_CENTER, "Powered by Bruno Ghion");
     switch (menu)
     {
@@ -44,7 +44,7 @@ void draw_screen_menu(int menu){
 }
 
 void draw_string_tmp(char *str){
-    al_clear_to_color(al_map_rgb(0,0,0));
+    al_clear_to_color(al_map_rgb(0, 0, 0));
     draw_text_font_h1(XWIN / 2, YWIN * 50 / 100, str);
     al_flip_display();
     al_rest(2.0);
@@ -58,11 +58,12 @@ void draw_countdown(){
 
 void draw_figure_bitmap(struct FIGURE_t *f, int w, int h, int s,
                         struct ALLEGRO_BITMAP *img){
-    if(f->dir != DIR_STOP){
-        if(f->last_dir != f->dir)
+    if (f->dir != DIR_STOP){
+        if (f->last_dir != f->dir)
             f->sourcex = 0;
+        
         f->sourcex += w;
-        if(f->sourcex >= w*3){
+        if (f->sourcex >= w*3){
             f->sourcex = 0;
         }
         f->sourcey = f->dir % 2;
@@ -77,7 +78,7 @@ void draw_figure_bitmap(struct FIGURE_t *f, int w, int h, int s,
 }
 
 void draw_enemy(int i){
-    if(enemy[i].alive){
+    if (enemy[i].alive){
         if (enemy[i].dir == DIR_DOWN || enemy[i].dir == DIR_UP){
             draw_figure_bitmap(&enemy[i], 
                 ENEMY_W, ENEMY_H, 0, bitmap.enemy);
@@ -153,9 +154,9 @@ void draw_score_level_life(void){
 
 	snprintf(s, 255, "score: %d", score);
     snprintf(l, 255, "level: %d", level);
-    al_draw_text(font.h5, al_map_rgb(0,0,0), XWIN * 3 / 100, 
+    al_draw_text(font.h5, al_map_rgb(0, 0, 0), XWIN * 3 / 100, 
             YWIN * 3 / 100, ALLEGRO_ALIGN_LEFT, s);
-    al_draw_text(font.h5, al_map_rgb(0,0,0), XWIN * 80 / 100, 
+    al_draw_text(font.h5, al_map_rgb(0, 0, 0), XWIN * 80 / 100, 
             YWIN * 3 / 100, ALLEGRO_ALIGN_LEFT, l);
 }
 
@@ -163,14 +164,13 @@ void draw_play(void){
     int i;
 
     draw_background();
-    for(i = 0; i < MAX_BULLETS; i++)
+    for (i = 0; i < MAX_BULLETS; i++)
         draw_bullet(i);
 
     for (i = 0; i < n_enemies; i++)
         draw_enemy(i);
 
     draw_player(); 
-
     draw_score_level_life();
     al_flip_display();
 }
@@ -210,14 +210,14 @@ void draw_game_over(int h_score){
     char s[255];
     	    
     snprintf(s, 255, "score: %d", score);
-    al_clear_to_color(al_map_rgb(0,0,0));
+    al_clear_to_color(al_map_rgb(0, 0, 0));
     draw_text_font_h1(XWIN / 2, YWIN * 50 / 100, "Game Over!");
     draw_text_font_h2(XWIN / 2, YWIN * 60 / 100, s);
 
     if (h_score < score)
-        al_draw_text(font.h2, al_map_rgb(255,0,0), XWIN / 2, 
+        al_draw_text(font.h2, al_map_rgb(255, 0, 0), XWIN / 2, 
             YWIN * 65 / 100, ALLEGRO_ALIGN_CENTER, "New High Score!");
-    al_draw_text(font.h3, al_map_rgb(255,255,255), XWIN / 2, 
+    al_draw_text(font.h3, al_map_rgb(255, 255, 255), XWIN / 2, 
             YWIN * 90 / 100, ALLEGRO_ALIGN_CENTER, 
             "Press ESC to return to the menu!");
     al_flip_display();

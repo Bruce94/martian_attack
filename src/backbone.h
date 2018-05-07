@@ -141,6 +141,7 @@ ALLEGRO_TIMER       *timer;
 sem_t               sem_enemies_init;
 sem_t               sem_enemies;
 sem_t               sem_bullet;
+sem_t               sem_player;
 //-----------------------------------------------------------------------------
 
 #endif

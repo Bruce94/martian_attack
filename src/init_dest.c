@@ -6,28 +6,28 @@
 //-----------------------------------------------------------------------------
 void init_audio(void){
     audio.sample_game = al_load_sample("data/sound/sample_game.wav");
-    if(audio.sample_game == NULL)
+    if (audio.sample_game == NULL)
         printf("Audio Error, sample_game.wav error!\n");
     audio.sample_lose = al_load_sample("data/sound/sample_lose.wav");
-    if(audio.sample_lose == NULL)
+    if (audio.sample_lose == NULL)
         printf("Audio Error, sample_lose.wav error!\n");
     audio.shot = al_load_sample("data/sound/shot.wav");
-    if(audio.shot == NULL)
+    if (audio.shot == NULL)
         printf("Audio Error, shot.wav error!\n");
     audio.player_death = al_load_sample("data/sound/player_death1.wav");
-    if(audio.player_death == NULL)
+    if (audio.player_death == NULL)
         printf("Audio Error, player_death1.wav error!\n");
     audio.oh_yeah = al_load_sample("data/sound/oh_yeah.wav");
-    if(audio.oh_yeah == NULL)
+    if (audio.oh_yeah == NULL)
         printf("Audio Error, oh_yeah.wav error!\n");
     audio.enemy_death = al_load_sample("data/sound/enemy_death.wav");
-    if(audio.enemy_death == NULL)
+    if (audio.enemy_death == NULL)
         printf("Audio Error, enemy_death.wav error!\n");    
     audio.monster_start = al_load_sample("data/sound/monster_start.wav");
-    if(audio.monster_start == NULL)
+    if (audio.monster_start == NULL)
         printf("Audio Error, monster_start.wav error!\n");   
     audio.game_loop = al_load_sample("data/sound/game_loop.wav");
-    if(audio.game_loop == NULL)
+    if (audio.game_loop == NULL)
         printf("Audio Error, game_loop.wav error!\n");    
 }
 
@@ -36,17 +36,17 @@ void init_audio(void){
 // Executed in init_allegro function.
 //-----------------------------------------------------------------------------
 void init_font(void){
-    font.h1 = al_load_font("data/font/DRIVEBY.TTF",50, 0);
+    font.h1 = al_load_font("data/font/DRIVEBY.TTF", 50, 0);
     if (font.h1 == NULL){
         printf("Font Error, DRIVEBY.TTF error!\n");
     }
-    font.h2 = al_load_font("data/font/ResagnictoBold.ttf",20, 0);
-    font.h3 = al_load_font("data/font/ResagnictoBold.ttf",18, 0);
-    font.h4 = al_load_font("data/font/ResagnictoBold.ttf",10, 0);
+    font.h2 = al_load_font("data/font/ResagnictoBold.ttf", 20, 0);
+    font.h3 = al_load_font("data/font/ResagnictoBold.ttf", 18, 0);
+    font.h4 = al_load_font("data/font/ResagnictoBold.ttf", 10, 0);
     if (font.h2 == NULL){
         printf("Font Error, ResagnictoBold.ttf error!\n");
     }
-    font.h5 = al_load_font("data/font/basica.ttf",15, 0);
+    font.h5 = al_load_font("data/font/basica.ttf", 15, 0);
 }
 
 
@@ -93,8 +93,8 @@ void init_bitmap(void){
 //-----------------------------------------------------------------------------
 void init_allegro(void){
     if (!al_init())
-        al_show_native_message_box(NULL,"Allegro Error","Error",
-            "Could not initialize Allegro 5","Ok",ALLEGRO_MESSAGEBOX_ERROR);
+        al_show_native_message_box(NULL, "Allegro Error", "Error",
+            "Could not initialize Allegro 5", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
     
     al_init_primitives_addon();
     al_init_image_addon();
@@ -108,9 +108,9 @@ void init_allegro(void){
     al_set_new_display_flags(0);
     al_set_new_window_position(XPWIN,YPWIN);
     display = al_create_display(XWIN, YWIN);
-    if(!display)
-        al_show_native_message_box(display,"Display Error", "Error",
-            "Display window could not be shown","Ok",ALLEGRO_MESSAGEBOX_ERROR);
+    if (!display)
+        al_show_native_message_box(display, "Display Error", "Error",
+            "Display window could not be shown", "Ok", ALLEGRO_MESSAGEBOX_ERROR);
     al_set_window_title(display, "Martian Attack");
     event_queue = al_create_event_queue();
 
@@ -136,7 +136,9 @@ void init(void){
 
     sem_init(&sem_enemies_init, 0, 1);
 	sem_init(&sem_enemies, 0, 1);
-    sem_init(&sem_bullet,0,1);
+    sem_init(&sem_bullet, 0, 1);
+    sem_init(&sem_player, 0, 1);
+    
     score = 0;
     level = 0;
 }
@@ -147,8 +149,8 @@ void *init_player(void *arg){
     player.movespeed = 4;
     player.sourcex = 0;
     player.sourcey = 0;
-    player.x = XWIN/2;
-    player.y = YWIN/2;
+    player.x = XWIN / 2 - PLAYER_W / 2;
+    player.y = YWIN / 2 - PLAYER_H / 2;
     player.alive = true;
 }
 
@@ -296,7 +298,6 @@ void dest_audio(){
         al_destroy_sample(audio.monster_start);
         al_destroy_sample(audio.oh_yeah);
         al_destroy_sample(audio.game_loop);
-
     #endif //defined unix
     #if defined(_WIN32)
         al_free(audio.sample_game);
@@ -306,7 +307,6 @@ void dest_audio(){
         al_free(audio.enemy_death);       
         al_free(audio.oh_yeah);
         al_free(audio.game_loop);
-
     #endif
 }
 
@@ -321,9 +321,8 @@ void dest_allegro(void){
 
 void reset_bullet(void){
     int i;
-    for (i = 0; i < MAX_BULLETS; i ++){
+    for (i = 0; i < MAX_BULLETS; i ++)
         bullet[i].f.alive = false;
-    }
 }
 
 void reset_game(void){

@@ -46,7 +46,7 @@ void bullet_enemy_collision(int i){
     int bx = bullet[i].f.x;
     int by = bullet[i].f.y;
     int bw = bullet[i].f.x + BULLET_W;
-    int bh = bullet[i].f.x + BULLET_H;
+    int bh = bullet[i].f.y + BULLET_H;
     int ex, ey, ew, eh;
     
     for (j = 0; j < n_enemies; j++){
@@ -57,11 +57,13 @@ void bullet_enemy_collision(int i){
                 ew = enemy[j].x + ENEMY_W;
                 eh = enemy[j].y + ENEMY_H;
             }
-            else{
+            else if (enemy[j].dir == DIR_RIGHT || enemy[j].dir == DIR_LEFT){
                 ew = enemy[j].x + ENEMY_H;           
                 eh = enemy[j].y + ENEMY_W;
             }
-            if ((bx >= ex && bx <= ew) && (by >= ey && by <= eh)){
+            if (((bx >= ex && bx <= ew) || (bw >= ex && bw <= ew)) &&
++              ((by >= ey && by <= eh) || (bh >= ey && bh <= eh))){
+            //if ((bx >= ex && bx <= ew) && (by >= ey && by <= eh)){
                 bullet[i].f.alive = false;
                 bullet[i].explosion = true;
                 enemy[j].alive = false;
@@ -102,7 +104,7 @@ void enemy_player_collision(int i){
         pw = player.x + PLAYER_H;           
         ph = player.y + PLAYER_W;
     }
-    if (((px >= ex && px <= ew) || (pw >= ex && pw <= ew))&&
+    if (((px >= ex && px <= ew) || (pw >= ex && pw <= ew)) &&
         ((py >= ey && py <= eh) || (ph >= ey && ph <= eh))){
         al_stop_sample(&audio.id);
         al_play_sample(audio.player_death,0.4,0.0, 1,
@@ -132,25 +134,25 @@ void move_player(bool key[]){
 void *move_bullet(void *arg){
     int i = *((int *) arg);
     sem_wait(&sem_bullet);
-        if (bullet[i].f.alive){
-            if (bullet[i].f.x < 0 || bullet[i].f.x > XWIN || 
-                bullet[i].f.y < 0 || bullet[i].f.y > YWIN){
-                bullet[i].f.alive = false;
-            }
-            else{
-                if (bullet[i].f.dir == DIR_DOWN)
-                    down(&bullet[i].f);
-                if (bullet[i].f.dir == DIR_UP)
-                    up(&bullet[i].f);
-                if (bullet[i].f.dir == DIR_RIGHT)
-                    right(&bullet[i].f);
-                if (bullet[i].f.dir == DIR_LEFT)
-                    left(&bullet[i].f);
-            }
-            sem_wait(&sem_enemies);
-                bullet_enemy_collision(i);
-            sem_post(&sem_enemies);
+    if (bullet[i].f.alive){
+        if (bullet[i].f.x < 0 || bullet[i].f.x > XWIN || 
+            bullet[i].f.y < 0 || bullet[i].f.y > YWIN){
+            bullet[i].f.alive = false;
         }
+        else{
+            if (bullet[i].f.dir == DIR_DOWN)
+                down(&bullet[i].f);
+            if (bullet[i].f.dir == DIR_UP)
+                up(&bullet[i].f);
+            if (bullet[i].f.dir == DIR_RIGHT)
+                right(&bullet[i].f);
+            if (bullet[i].f.dir == DIR_LEFT)
+                left(&bullet[i].f);
+        }
+        sem_wait(&sem_enemies);
+            bullet_enemy_collision(i);
+        sem_post(&sem_enemies);
+    }
     sem_post(&sem_bullet);
 }
 
@@ -159,6 +161,7 @@ void *move_enemy(void *arg){
     float dx, dy;
     bool ud_rl;
     sem_wait(&sem_enemies);
+    sem_wait(&sem_player);
     if(enemy[i].alive){
         dx = player.x - enemy[i].x;
         dy = player.y - enemy[i].y;
@@ -170,7 +173,7 @@ void *move_enemy(void *arg){
                 right(&enemy[i]);
             else if (enemy[i].dir == DIR_DOWN)
                 down(&enemy[i]);
-            else if(ud_rl)
+            else if (ud_rl)
                 right(&enemy[i]); 
             else
                 down(&enemy[i]); 
@@ -207,5 +210,6 @@ void *move_enemy(void *arg){
         }
         enemy_player_collision(i);
     }
+    sem_post(&sem_player);
     sem_post(&sem_enemies);
 }

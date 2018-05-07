@@ -61,9 +61,9 @@ int read_score(void){
     if (fr == NULL){
         return 0;
     }
-    fscanf (fr, "%d", &i);    
-    while (!feof (fr)) 
-        fscanf (fr, "%d", &i);
-    fclose (fr);
+    fscanf(fr, "%d", &i);    
+    while (!feof(fr)) 
+        fscanf(fr, "%d", &i);
+    fclose(fr);
     return i;
 }
