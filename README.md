@@ -6,7 +6,8 @@ The player can defend itself shooting enemies.
 You need to install Allegro 5:
 https://wiki.allegro.cc/index.php?title=Getting_Started#Installing_Allegro
 
-To compile use the Makefile:
+To compile use the Makefile:<br />
+cd src/<br />
 make -f Makefile
 
 
